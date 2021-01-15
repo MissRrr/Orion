@@ -517,7 +517,7 @@ class TestColocation:
 @pytest.mark.portal
 class TestOrder:
     def test_create(self):
-        """创建Order，测试用例包括：创建Colocation成功/使用不存在资源创建Colocation"""
+        """创建Order，测试用例包括：创建 Order 成功/使用不存在资源创建Order"""
         subprocess.run('python3 vtel.py stor r c res_test -s 10m -a -num 1', shell=True)
         disk = iscsi.Disk()
         disk_data = disk.show('res_test')
@@ -526,7 +526,7 @@ class TestOrder:
         iscsilu = crm.ISCSILogicalUnit()
         iscsilu.create('res_test', 'iqn.2020-04.feixitek.com:versaplx00', lunid, path,
                        'iqn.2020-11.com.example:pytest01')
-        # 要先创建 resource 才可以创建 colocation
+        # 要先创建 resource 才可以创建 Order
         order = crm.Order()
         # 创建成功
         assert order.create('or_res_test', iscsilu.target_name, 'res_test')

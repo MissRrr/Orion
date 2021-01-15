@@ -1,12 +1,20 @@
 {
     "Host": {},
-    "Disk": {},
+    "Disk": {
+        "res_test": "/dev/drbd1000"
+    },
     "HostGroup": {},
     "DiskGroup": {},
     "Map": {},
     "Portal": {
         "portal_test_4": {
             "ip": "10.203.1.201",
+            "port": "3260",
+            "netmask": "24",
+            "target": []
+        },
+        "pt_1": {
+            "ip": "10.203.1.204",
             "port": "3260",
             "netmask": "24",
             "target": []

@@ -10,16 +10,19 @@ omit =
 	process.py
 	test.py
 	conftest.py
+	*/linstor.py
+	*/lvm.py
+	*/stor.py
 
 [report]
 exclude_lines =
     class RollBack*
-    def rollback*
-    def rb*
+    def rollback
+    def rb_*
     elif status == 'NOT_STARTED':
     elif status == 'NETWORK_ERROR':
-    def restore*
-    def refresh*
+    def restore
+    def refresh
     def deco*
     raise TimeoutError*
 	p.terminate()*
