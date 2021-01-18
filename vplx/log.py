@@ -8,6 +8,9 @@ import time
 from random import shuffle
 
 
+
+
+
 LOG_PATH = '../vplx/'
 # LOG_PATH = '/var/log/vtel/'
 CLI_LOG_NAME = 'cli.log'
@@ -75,9 +78,6 @@ class MyLoggerAdapter(logging.LoggerAdapter):
 
 
 class Log(object):
-<<<<<<< HEAD
-    def __init__(self, user, tid, file_name=CLI_LOG_NAME):
-=======
     _instance_lock = threading.Lock()
     # _instance = None
     user = None #新的进程
@@ -88,7 +88,6 @@ class Log(object):
     logger = None
 
     def __init__(self):
->>>>>>> 1bb52c0e71c661e5e999b0390ede67fd7233c890
         """
         日志格式：
         asctime：时间
@@ -99,37 +98,10 @@ class Log(object):
         d1：description1，日志数据的描述一
         d2：description2，日志数据的描述二
         data：具体的结果或者数据
-
         :param user:
         :param tid:
         :param file_name:
         """
-<<<<<<< HEAD
-        fmt = logging.Formatter(
-            "%(asctime)s [%(tid)s] [%(user)s] [%(t1)s] [%(t2)s] [%(d1)s] [%(d2)s] [%(data)s]|",
-            datefmt='[%Y/%m/%d %H:%M:%S]')
-        self.handler_input = logging.handlers.RotatingFileHandler(filename=f'{LOG_PATH}{file_name}', mode='a',
-                                                                  maxBytes=10 * 1024 * 1024, backupCount=20)
-        self.handler_input.setFormatter(fmt)
-        self.user = user
-        self.tid = tid
-
-    def logger_input(self):
-        vtel_logger = logging.getLogger('vtel_logger')
-        vtel_logger.addHandler(self.handler_input)
-        vtel_logger.setLevel(logging.DEBUG)
-        extra_dict = {
-            "user": "USERNAME",
-            "tid": "",
-            "t1": "TYPE1",
-            "t2": "TYPE2",
-            "d1": "",
-            "d2": "",
-            "data": ""}
-        # 获取一个自定义LoggerAdapter类的实例
-        logger = MyLoggerAdapter(vtel_logger, extra_dict)
-        return logger
-=======
         pass
 
     def __new__(cls, *args, **kwargs):
@@ -140,7 +112,6 @@ class Log(object):
                     Log._instance.logger = MyLoggerAdapter(LOG_PATH,CLI_LOG_NAME)
 
         return Log._instance
->>>>>>> 1bb52c0e71c661e5e999b0390ede67fd7233c890
 
     # write to log file
     def write_to_log(self, t1, t2, d1, d2, data):
