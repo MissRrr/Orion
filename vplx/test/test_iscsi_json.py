@@ -47,6 +47,7 @@ class TestJsonOperation:
     # 2.文件不存在时新建一个空的 json 文件，有相应的数据结构
     # 3.文件格式不是 json 读取失败返回None，print('Failed to read json file.')
     def test_read_json(self):
+        """测试 json 文件读取方法，测试用例包括：成功读取/文件不存在新建有对应数据结构，数据为空的 json 文件/文件格式不是 json 读取失败"""
         assert self.js.read_json() is not None
         # 删除文件使文件不存在
         path = '../vplx/map_config.json'
@@ -75,6 +76,7 @@ class TestJsonOperation:
     # def test_add_data(self):
 
     def test_update_data(self):
+        """测试数据更新函数，测试用例包括：disk更新/host更新/diskgroup更新/hostgroup更新/map更新"""
         subprocess.run('python3 vtel.py iscsi d s', shell=True)
         data = self.js.update_data('Disk', 'pytest_disk', 'pytest_path')
         assert data == {'pytest_disk': 'pytest_path'}
@@ -88,16 +90,18 @@ class TestJsonOperation:
         assert data_map['pytest_map'] == {'HostGroup': ['pytest_hg'], 'DiskGroup': ['pytest_dg']}
 
     def test_get_data(self):
+        """测试json数据获取函数"""
         self.js.update_data('Host', 'pytest_host', 'pytest_iqn')
         assert 'pytest_host' in self.js.get_data('Host')
 
     def test_check_key(self):
+        """检查 json 结构中是否包含某个类型的 key 值"""
         assert self.js.check_key('Host', 'pytest_host')
 
         assert not self.js.check_key('Host', 'pytest_host0')
 
     def test_check_value(self):
-        # JSON检查value值的结果
+        """检查 JSON 检查结构中某个类型的 value 值的结果"""
         assert self.js.check_value('Host', 'pytest_iqn')
         assert not self.js.check_value('Host', 'pytest_iqn_false')
         # self.js.delete_data('Host', 'pytest_host')
@@ -121,6 +125,7 @@ class TestJsonOperation:
     # ------------------   add  ----------------   2020.12.28
 
     def test_check_value_in_key(self):
+        """检查 JSON 检查结构中某个类型的 key 的 value 是否存在"""
         # key 存在， value 存在
         assert self.js.check_value_in_key('Host', 'pytest_host', 'pytest_iqn') == True
         # key 存在， value 不存在
@@ -153,6 +158,7 @@ class TestJsonOperation:
 
     # 具体函数没调用
     def test_get_hg_by_host(self):
+        """测试通过 host 取到使用这个 host 的所有 hostgroup 的函数"""
         # host 存在
         assert self.js.get_hg_by_host('pytest_host1') == ['pytest_hg']
         # host 不存在
@@ -160,6 +166,7 @@ class TestJsonOperation:
 
     # 具体函数没调用
     def test_get_map_by_group(self):
+        """"""
         assert self.js.get_map_by_group('HostGroup', 'pytest_hg') == ['pytest_map']
         assert not self.js.get_map_by_group('HostGroup', 'pytest_hg1')
         assert self.js.get_map_by_group('DiskGroup', 'pytest_dg') == ['pytest_map']

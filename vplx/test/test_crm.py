@@ -273,6 +273,7 @@ class TestCRMConfig:
         disk = iscsi.Disk()
         # attention
         disk_data = disk.show('res_test')
+        print(disk_data)
         path = disk_data[0][1]
         id = int(path[-4:]) - 1000
         assert self.crmconfig.create_crm_res('res_test', 'iqn.2020-04.feixitek.com:versaplx00', id, path,
