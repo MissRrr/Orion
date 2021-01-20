@@ -32,20 +32,21 @@ class TestDisk:
     # 根据 linstor 资源更新 disk，无传入参数，返回 disks 字典(可能为空)
     def test_update_disk(self):
         """该方法根据 linstor 资源更新 disk，测试用例包括获取非空字典/空字典"""
-        assert self.disk.update_disk() == {'res_test1': '/dev/drbd1000', 'res_test2': '/dev/drbd1006'}
+        length = len(self.disk.update_disk())
+        assert len(self.disk.update_disk()) >= 2
         # 清空 disk
         subprocess.run('python3 vtel.py stor r d res_test1 -y', shell=True)
         subprocess.run('python3 vtel.py stor r d res_test2 -y', shell=True)
         subprocess.run('python3 vtel.py stor r s', shell=True)
-        assert self.disk.update_disk() == {}
+        assert len(self.disk.update_disk()) == length-2
 
     def test_show(self):
         """展示disk"""
         subprocess.run('python3 vtel.py stor r c res_test1 -s 10m -a -num 1', shell=True)
         subprocess.run('python3 vtel.py stor r c res_test2 -s 10m -a -num 1', shell=True)
         subprocess.run('python3 vtel.py iscsi d s', shell=True)
-        assert self.disk.show('all') == [['res_test1', '/dev/drbd1000'], ['res_test2', '/dev/drbd1006']]
-        assert self.disk.show('res_test1') == [['res_test1', '/dev/drbd1000']]
+        assert len(self.disk.show('all')) >= 2
+        assert self.disk.show('res_test1')[0][0] == 'res_test1'
         # 不存在
         assert self.disk.show('res_test3') == []
 
@@ -227,7 +228,7 @@ class TestDiskGroup:
 
     def setup_class(self):
         subprocess.run('python3 vtel.py stor r c res_test -s 10m -a -num 1', shell=True)
-        subprocess.run('python3 vtel.py stor r c res_a -s 10m -a -num 1', shell=True)
+        subprocess.run('python3 vtel.py stor r c res_test1 -s 10m -a -num 1', shell=True)
         subprocess.run('python3 vtel.py iscsi d s', shell=True)
         # subprocess.run('python3 vtel.py iscsi h c test_host iqn.2020-04.feixitek.com:pytest0999', shell=True)
         # subprocess.run('python3 vtel.py iscsi d s', shell=True)
@@ -250,13 +251,13 @@ class TestDiskGroup:
         try:
             execute_crm_cmd('crm res stop res_test')
             execute_crm_cmd('crm conf del res_test')
-            execute_crm_cmd('crm res stop res_a')
-            execute_crm_cmd('crm conf del res_a')
+            execute_crm_cmd('crm res stop res_test1')
+            execute_crm_cmd('crm conf del res_test1')
         except Exception:
             print(Exception)
         finally:
             subprocess.run('python3 vtel.py stor r d res_test -y', shell=True)
-            subprocess.run('python3 vtel.py stor r d res_a -y', shell=True)
+            subprocess.run('python3 vtel.py stor r d res_test1 -y', shell=True)
         subprocess.run('python3 vtel.py iscsi d s', shell=True)
 
         self.hostg.delete('test_hg')
@@ -346,10 +347,10 @@ class TestDiskGroup:
     def test_add_disk(self):
         """diskgroup 新增 disk"""
         # 新增成功
-        assert not self.diskg.add_disk('test_dg', ['res_a'])
+        assert not self.diskg.add_disk('test_dg', ['res_test1'])
         # 不存在
         with patch('builtins.print') as terminal_print:
-            self.diskg.add_disk('test_dg2', ['res_a'])
+            self.diskg.add_disk('test_dg2', ['res_test1'])
             terminal_print.assert_called_with('Fail！Can\'t find test_dg2')
         with patch('builtins.print') as terminal_print:
             self.diskg.add_disk('test_dg', ['res_test'])
@@ -364,14 +365,14 @@ class TestDiskGroup:
         assert not self.diskg.remove_disk('test_dg', ['res_test'])
         # 移除失败
         with patch('builtins.print') as terminal_print:
-            self.diskg.remove_disk('test_dg2', ['res_a'])
+            self.diskg.remove_disk('test_dg2', ['res_test1'])
             terminal_print.assert_called_with('Fail！Can\'t find test_dg2')
         with patch('builtins.print') as terminal_print:
             self.diskg.remove_disk('test_dg', ['res_O'])
             terminal_print.assert_called_with('test_dg中不存在成员res_O，无法进行移除')
         # 只有一个资源移除后是否会删掉该dg , 会移除该 hg 和 所配置该 hg 的map
         with patch('builtins.print') as terminal_print:
-            self.diskg.remove_disk('test_dg', ['res_a'])
+            self.diskg.remove_disk('test_dg', ['res_test1'])
             terminal_print.assert_called_with('相关的map已经修改/删除')
         # self.map.delete_map('map1')
         # self.diskg.delete_diskgroup('test_dg')
